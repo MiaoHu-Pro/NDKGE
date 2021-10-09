@@ -113,8 +113,7 @@ if args.setting == "des":
 	
 	print("setting is des ... \n")
 
-
-	# 随机产生向量表示实体和关系的描述
+	# Randomly generated vectors for entities and relationships
 	# en_x,en_l = ent_init_embedding.shape
 	# random_ent_embeddings = np.random.uniform(-0.25, 0.25, (en_x, en_l))
 	# rel_x, rel_l = rel_init_embedding.shape
@@ -122,10 +121,6 @@ if args.setting == "des":
 	#
 	# print("random_rel_embeddings.shape ", random_rel_embeddings.shape)
 	# print("random_ent_embeddings.shape ",random_ent_embeddings.shape)
-
-
-
-
 
 else:
 
@@ -142,14 +137,8 @@ else:
 	print("entity_embs.shape ", entity_embs.shape)
 	print("rel_embs.shape ", rel_embs.shape)
 
-
-
-
-
-
 import time
 time.sleep(1)
-
 
 # dataloader for training
 train_dataloader = TrainDataLoader(

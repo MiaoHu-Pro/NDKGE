@@ -22,8 +22,6 @@ use_gpu = False
 def to_var(x):
     return Variable(torch.from_numpy(x).to(device))
 
-
-# 被引用模块所在的路径
 sys.path.append("../")
 from text_analytics.text_analytics.text_analytics import text_analytics
 
@@ -203,7 +201,7 @@ class ERDes(object):
         entity_set = list(set(entity_set))  # all entity
         # print("len entity_set", len(entity_set))
 
-        # 获取entity id
+        # get entity id
         entity_id_read_file = read_entity2id(self.entity2id_path)
         self.entity_symbol_set = entity_id_read_file[:, 0].tolist()
 
@@ -222,19 +220,12 @@ class ERDes(object):
         #                      '/m/04kxsb', '/m/02qyp19', '/m/02d413', '/m/02vk52z', '/m/01crd5', '/m/0q9kd', '/m/0184jc',
         #                      '/m/09w1n', '/m/0sx8l']
 
-        """
-        获得实体的描述
-        set_entity_obj     14951 entities and its description
-        all_entity2vec_set 14951 randomly generate vector as entity id
-        """
 
         all_entity_obj_list, all_entity_description_word_list, all_entity_mention_des_list, entity_word_bag = \
             obtain_entity_res(
                 X, sub_x_obj, entity2name, self.entity_symbol_set, self.num_neighbours, self.num_step)
 
-
         print("entity_word_bag : ", len(entity_word_bag))
-
         # print(all_entity_obj_list[0].id)
         # print(all_entity_obj_list[0].symbol)
         # print(all_entity_obj_list[0].label)
@@ -288,7 +279,6 @@ class ERDes(object):
             # print("rel_des_word ", rel_des_word)
             relation_description_list.append(rel_des_word)
 
-        # 合并，去重复
         all_word_bag = list(set(rel_word_bag + self.entity_word_bag))
 
         # print("rel_word_bag: ", len(rel_word_bag))
@@ -343,8 +333,6 @@ class ERDes(object):
 
         return np.array(entity_men_init_embedding),np.array(relation_init_embedding)
 
-
-
     def get_description_embeddings(self):
         """
         name + mention + new des
@@ -386,11 +374,6 @@ def obtain_train_triple_des(file_path, en_rel_des):
     r = train[:, 2].tolist()
     _r = [int(r[i]) for i in range(len(r))]
 
-    """
-    获取 词向量时出错get_sentence_init_embedding
-    原因，词库没有覆盖entity 和 relation 的描述所有词/
-    """
-
     h_des, r_des, t_des = en_rel_des.get_triple_des(_h, _r, _t)
 
     write_triple_descriptions(file_path + 'train_triple_des_4num_2step.txt', h_des, r_des, t_des)
@@ -409,10 +392,6 @@ def obtain_valid_triple_des(file_path, en_rel_des):
     # _h = [0, 2, 4, 6, 8, 10]
     # _r = [0, 1, 2, 3, 4, 5]
     # _t = [1, 3, 5, 7, 9, 11]
-    """
-    获取 词向量时出错get_sentence_init_embedding
-    原因，词库没有覆盖entity 和 relation 的描述所有词/
-    """
 
     h_des, r_des, t_des = en_rel_des.get_triple_des(_h, _r, _t)
 
@@ -432,10 +411,6 @@ def obtain_test_triple_des(file_path, en_rel_des):
     # _h = [0, 2, 4, 6, 8, 10]
     # _r = [0, 1, 2, 3, 4, 5]
     # _t = [1, 3, 5, 7, 9, 11]
-    """
-    获取 词向量时出错get_sentence_init_embedding
-    原因，词库没有覆盖entity 和 relation 的描述所有词/
-    """
 
     h_des, r_des, t_des = en_rel_des.get_triple_des(_h, _r, _t)
 
@@ -462,9 +437,6 @@ if __name__ == "__main__":
     en_rel_des.pre_process()
     ent_mention_init_embedding, rel_mention_init_embedding = en_rel_des.get_mention_embeddings()
     ent_description_init_embedding, rel_description_init_embedding = en_rel_des.get_description_embeddings()
-
-
-
 
     # en_rel_des.get_mention_embeddings()
     # en_rel_des.get_description_embeddings()

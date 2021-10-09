@@ -3,7 +3,7 @@
 
 # 1.read entity2id,
 # 2.read entity2text that is entity name,
-# 3.read entity2Obj, 将确实的实体名进行补全/
+# 3.read entity2Obj,
 import os
 
 import numpy as np

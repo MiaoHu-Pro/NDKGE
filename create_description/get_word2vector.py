@@ -95,27 +95,17 @@ def word2vector(word_dict):
     """
     print("Word to vector ... \n")
     # word2vector
-    word_to_idx = word_dict #数据集中所有的单词
+    word_to_idx = word_dict
 
     pretrained_embeddings = np.random.uniform(-0.25, 0.25, (len(word_dict), EMBEDDING_DIM))
 
     # word2vec = load_w2v_vec('./data/GoogleNews-vectors-negative300.bin', word_to_idx)
     word2vec = load_golve_vec(word_to_idx)
 
-    for word, vector in word2vec.items():# 初始化每个词
+    for word, vector in word2vec.items():
 
         pretrained_embeddings[word_to_idx[word]] = vector
 
-    #打印测试
-    # print("NULL -> ",word_to_idx['NULL'],pretrained_embeddings[word_to_idx['NULL']])
-    # print("contemporary -> ",pretrained_embeddings[30080])
-    # print("the - > ",pretrained_embeddings[12104])
-    # print("the - > ",pretrained_embeddings[word_to_idx['the']])
-
-    # singer_index = word_to_idx['singer']
-    # print(singer_index)
-    # print("singer - > ",pretrained_embeddings[singer_index])
-    # print("bryan - > ",pretrained_embeddings[25286])
     #
     pretrained_embeddings = torch.as_tensor(pretrained_embeddings)
     return pretrained_embeddings.to(torch.float32)
@@ -148,26 +138,18 @@ def get_sentence_init_embedding(pre_embeddings,word_bag,sentence_set):
     sentence_word_index_set = []
     for i in range(len(sentence_set)):
 
-        # 填充句子，没有达到最大长度的句子使用NULL填充。
         sentence_set[i] = sentence_set[i] + ["NULL"] * (max_num_words - len(sentence_set[i]))
         # sentence_word_index_set.append(pre_word2vec[[word_bag[x] for x in sentcence_set[i]]])
         # print(sentence_set[i])
         # time.sleep(5)
         sentence_word_index_set.append([word_bag[x] for x in sentence_set[i]])
 
-    sentence_word_index_set = np.array(sentence_word_index_set).T # 专置
+    sentence_word_index_set = np.array(sentence_word_index_set).T
 
-    # print(sentence_word_index_set)
-
-    tensor_sentence_word_index_set = torch.as_tensor(sentence_word_index_set) # numpy 转为 tensor
-
-    # print(tensor_sentence_word_index_set)
+    tensor_sentence_word_index_set = torch.as_tensor(sentence_word_index_set)
 
     init_embedding = pre_embeddings[tensor_sentence_word_index_set].view(max_num_words, len(sentence_set), -1)
 
-    # print(x)
-    # print(init_embedding.shape)
-    # print("Finish get_sentence_init_embedding ...")
     return init_embedding
 
 if __name__=="__main__":
@@ -176,9 +158,9 @@ if __name__=="__main__":
     pass
     # word_bag_path = "FB15K/word_bag.txt"
     #
-    # word_bag, pre_embeddings = get_word2vec(word_bag_path) # 得到预训练词模型
+    # word_bag, pre_embeddings = get_word2vec(word_bag_path)
     #
-    # # pre_embeddings = torch.as_tensor(pre_word2vec)# numpy 转为 tensor
+    # # pre_embeddings = torch.as_tensor(pre_word2vec)
     #
     # # pre_embeddings = nn.Embedding(len(word_bag), 300)
     #

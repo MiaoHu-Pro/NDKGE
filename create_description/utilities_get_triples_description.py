@@ -27,7 +27,7 @@ class MyThread(threading.Thread):
         self.result = self.func(*self.args)
 
     def get_result(self):
-        threading.Thread.join(self)  # 等待线程执行完毕
+        threading.Thread.join(self)
         try:
             return self.result
         except Exception:
@@ -127,9 +127,6 @@ def set_entity_description_obj(entity_des):
         en_des_word_list = entity.get_entity_description()
         all_entity_description_list.append(en_des_word_list)
 
-        # 记录词表
-        # new_word_bag += entity_des_word_list
-        # new_word_bag = list(set(new_word_bag))
 
         entity_description_list.append(entity)
 
@@ -144,76 +141,6 @@ def set_entity_description_obj(entity_des):
     print("len(word_bag)", len(word_bag))
 
     return entity_description_list, all_entity_description_list, word_bag, all_word_dic, pre_word_embedding
-
-
-# def get_triples_description(train2id, relation2id, entity_description_obj, word_bag, pre_word_embedding):
-#     print("get_triples_description - begin ... \n")
-#
-#     """
-#     train2id : the index of train data
-#     relation2id: the index of relation
-#     entity_description_obj : entity object which contains id, symbol, name, description, neighbours.
-#     word_bag : the number of words of relation and entity
-#     pre_word_embedding: the word-vector of all words
-#     return: pre-description embedding.
-#     """
-#     head_description_list = []
-#     # relation_description_list = []
-#     # tail_description_list = []
-#
-#     for i in range(len(train2id)):
-#
-#         # head_description_list = []
-#
-#         print(i, " --> ", train2id[i], "\n")
-#         if i == 3:
-#             print("i = 10 break !")
-#             break
-#
-#         head_index = int(train2id[i][0])
-#         tail_index = int(train2id[i][1])
-#         relation_index = int(train2id[i][2])
-#
-#         head_obj = entity_description_obj[head_index]
-#
-#         tail_obj = entity_description_obj[tail_index]
-#
-#         relation_des = relation2id[relation_index][0]
-#
-#         relation_description = str(
-#             relation_des) + ', ' + 'which is between ' + head_obj.symb + ' and ' + tail_obj.symb + ';' \
-#                                + head_obj.get_random_neighbour() + ';' + tail_obj.get_random_neighbour()
-#
-#         """
-#         obtain entity and relation description represented by word
-#         """
-#         # head_description_word_list = entity_text_process(head_description)
-#         # relation_description_word_list = relation_text_process(relation_description)
-#         # tail_description_word_list = entity_text_process(tail_description)
-#         #
-#         head_description_word_list = head_obj.get_entity_description()
-#         relation_description_word_list = relation_text_process(relation_description)
-#         tail_description_word_list = tail_obj.get_entity_description()
-#
-#         """ create word-bag , I have obtain word list , and obtain each word embedding using glove"""
-#
-#         """ next , all words become vector using World2vector
-#             将获取的head_description_word_list，relation_description_word_list，tail_description_word_list
-#             通过word词模型，变成向量,然后使用LSTM进行编码
-#             from get_word2vector import get_word2vec
-#         """
-#         # get sentence embedding
-#
-#         head_description_list.append(head_description_word_list)
-#         # relation_description_list.append(relation_description_word_list)
-#         # tail_description_list.append(tail_description_word_list)
-#
-#         # print("head_description_list",head_description_list)
-#
-#     get_sentence_init_embedding(pre_word_embedding, word_bag, head_description_list)
-#
-#     # write_to_file("./FB15K/word_bag.txt",word_list)
-
 
 def obtain_all_entity_resource(entity_description_path):
     #
@@ -283,20 +210,6 @@ def get_hrt_description_embedding(_h, _r, _t, entity_res, relation2id):
     for i in range(len(relation_name)):
         # print("combine relation des ", i)
 
-        # head_name = head_obj[i].label
-        # tail_name = tail_obj[i].label
-        # if '/m/' in head_name:
-        #     head_name = head_obj[i].label
-        #
-        # else:
-        #     head_name = ta.clean(head_name)
-        #
-        # if '/m/' in tail_name:
-        #     tail_name = tail_obj[i].label
-        #
-        # else:
-        #     tail_name = ta.clean(tail_name)
-
         rel_des = str(relation_name[i]) + ', ' + 'which is between ' + head_obj[i].label + ' and ' + tail_obj[
             i].label + ';' \
                   + head_obj[i].get_random_neighbour() + ';' + tail_obj[i].get_random_neighbour()
@@ -318,83 +231,12 @@ def get_hrt_description_embedding(_h, _r, _t, entity_res, relation2id):
 
     relation_description_word_list = relation_text_process(relation_description_list)
 
-    # tail_description_word_list = tail_obj.get_entity_description()
-
-    """ create word-bag , I have obtain word list , and obtain each word embedding using glove"""
-
-    """ next , all words become vector using World2vector 
-        将获取的head_description_word_list，relation_description_word_list，tail_description_word_list
-        通过word词模型，变成向量,然后使用LSTM进行编码
-        from get_word2vector import get_word2vec 
-    """
-    # get sentence embedding
-
-    # head_description_list.append(head_description_word_list)
-    # relation_description_list.append(relation_description_word_list)
-    # tail_description_list.append(tail_description_word_list)
-    # print("head_description_list",head_description_list)
-
-    # h_des_init_embedding = get_sentence_init_embedding(pre_word_embedding, word_bag, head_description_list)
-    # r_des_init_embedding = get_sentence_init_embedding(pre_word_embedding, word_bag, relation_description_word_list)
-    # t_des_init_embedding = get_sentence_init_embedding(pre_word_embedding, word_bag, tail_description_list)
-
-    # Thread
-    # print("head_description_list:\n ", head_description_list)
-    # print("relation_description_word_list:\n ", relation_description_word_list)
-    # print("tail_description_list:\n ", tail_description_list)
-    # print("------------------")
-
-    # time.sleep(2)
-
-    # thread_list = []
-    # h_des_e = MyThread(get_sentence_init_embedding, args=(pre_word_embedding, word_bag, head_description_list,))
-    # r_des_e = MyThread(get_sentence_init_embedding,
-    #                    args=(pre_word_embedding, word_bag, relation_description_word_list,))
-    # t_des_e = MyThread(get_sentence_init_embedding, args=(pre_word_embedding, word_bag, tail_description_list,))
-    #
-    # thread_list.append(h_des_e)
-    # thread_list.append(r_des_e)
-    # thread_list.append(t_des_e)
-    #
-    # for t in thread_list:
-    #     t.start()
-    # for t in thread_list:
-    #     t.join()
-    #
-    # h_des_init_embedding = thread_list[0].get_result()
-    # r_des_init_embedding = thread_list[1].get_result()
-    # t_des_init_embedding = thread_list[2].get_result()
-
-    # print(h_des_init_embedding.shape)
-
-    # return h_des_init_embedding, r_des_init_embedding, t_des_init_embedding
-
     return head_description_list, relation_description_word_list,tail_description_list
 
 if __name__ == "__main__":
     entity_description_path = "../benchmarks/FB15K/all_entity_description_3.txt"
 
     ret = obtain_all_entity_resource(entity_description_path)
-
-    # ret = {'all_entity_description_obj': all_entity_description_obj,
-    #       'all_entity_description_word_list': all_entity_description_word_list, 'all_word_bag': all_word_bag,
-    #       'all_word_bag_dic': all_word_bag_dic, 'pre_trained_word_embedding': pre_trained_word_embedding}
-
-    # number_of_entity = len(entity_description_obj)
-    # print(number_of_entity)
-    # for i in range(number_of_entity):
-    #     tmp_en = entity_description_obj[i]
-    #     entity_str = tmp_en.id + '\t' + tmp_en.symb + '\t' + tmp_en.label + '\t' + tmp_en.description
-    #     print(entity_str)
-    #     entity_des = tmp_en.get_entity_description()
-    #     print("entity_des :\n ",entity_des)
-    #
-    #     print("all_entity_description_list :\n",all_entity_description_list[i])
-    #     import time
-    #     time.sleep(2)
-
-    # word_bag_path = "./FB15K/word_bag.txt"
-    # word_bag, pre_word_embedding = get_word2vec(word_bag_path)
 
     """
     Obtain entity2id ,relation2id, and train2id. (25 Mar)
@@ -406,12 +248,6 @@ if __name__ == "__main__":
     # entity2id = read_ent_rel_2id(entity2id_path)
     relation2id = read_ent_rel_2id(relation2id_path)
 
-    # train2id = read_data2id(train_id_path)
-
-    # entity_description_obj = ret['all_entity_description_obj']
-    # word_bag_dic = ret['all_word_bag_dic']
-    # pre_word_embedding = ret['pre_trained_word_embedding']
-    # get_triples_description(train2id, relation2id, entity_description_obj, word_bag_dic, pre_word_embedding)
 
     _h = [0, 2, 4, 6, 8, 10]
     _r = [0, 1, 2, 3, 4, 5]

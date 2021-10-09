@@ -27,7 +27,7 @@ class MyThread(threading.Thread):
         self.result = self.func(*self.args)
 
     def get_result(self):
-        threading.Thread.join(self)  # 等待线程执行完毕
+        threading.Thread.join(self)
         try:
             return self.result
         except Exception:
@@ -126,10 +126,6 @@ def set_entity_description_obj(entity_des):
 
         en_des_word_list = entity.get_entity_description()
         all_entity_description_list.append(en_des_word_list)
-
-        # 记录词表
-        # new_word_bag += entity_des_word_list
-        # new_word_bag = list(set(new_word_bag))
 
         entity_description_list.append(entity)
 
@@ -291,30 +287,6 @@ def get_hrt_description_embedding(_h, _r, _t, entity_res, relation2id):
 
     relation_description_word_list = relation_text_process(relation_description_list)
 
-    # tail_description_word_list = tail_obj.get_entity_description()
-
-    """ create word-bag , I have obtain word list , and obtain each word embedding using glove"""
-
-    """ next , all words become vector using World2vector 
-        将获取的head_description_word_list，relation_description_word_list，tail_description_word_list
-        通过word词模型，变成向量,然后使用LSTM进行编码
-        from get_word2vector import get_word2vec 
-    """
-    # get sentence embedding
-
-    # head_description_list.append(head_description_word_list)
-    # relation_description_list.append(relation_description_word_list)
-    # tail_description_list.append(tail_description_word_list)
-    # print("head_description_list",head_description_list)
-
-    # h_des_init_embedding = get_sentence_init_embedding(pre_word_embedding, word_bag, head_description_list)
-    # r_des_init_embedding = get_sentence_init_embedding(pre_word_embedding, word_bag, relation_description_word_list)
-    # t_des_init_embedding = get_sentence_init_embedding(pre_word_embedding, word_bag, tail_description_list)
-
-    # Thread
-
-    # print("head_description_list:\n",head_description_list)
-    # print("relation_description_word_list:\n",relation_description_word_list)
 
     thread_list = []
     h_des_e = MyThread(get_sentence_init_embedding, args=(pre_word_embedding, word_bag, head_description_list,))

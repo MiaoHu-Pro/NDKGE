@@ -4,7 +4,6 @@ import numpy as np
 import pandas as pd
 import ast
 import sys
-#被引用模块所在的路径
 sys.path.append("../")
 from text_analytics.text_analytics.text_analytics import text_analytics
 
@@ -157,23 +156,18 @@ def relation_text_process(rel_str_list):
         #
         for i in range(len(relation_neighbours)):
 
-            re_list = relation_neighbours[i].split(" ") # 分解每个邻居
-            # re_list = li[i].split(" ") # 分解每个邻居
-            # re_list = li[i]
+            re_list = relation_neighbours[i].split(" ")
 
             if 'has' in re_list and 'with' in re_list:
 
                 beg = re_list.index('has')
                 end = re_list.index('with')
 
-                # print(beg,end)
                 sub_re_list = re_list[beg:end+1]
-                # print(sub_re_list)
 
                 w_list = []
-                # 加入头实体
                 n_head = re_list[:beg]
-                #
+
                 n_head_list = []
                 if len(n_head) == 1 and '/m/' in n_head[0]:
                     n_head_list.append(n_head[0])
@@ -186,13 +180,10 @@ def relation_text_process(rel_str_list):
                 head_en = n_head_list
                 w_list += head_en #
 
-
-                # 处理关系
                 for j in range(len(sub_re_list)):
 
                     w_list += ta.clean(sub_re_list[j])
 
-                # 处理尾实体
                 n_tail = re_list[end+1: ]
                 n_tail_list = []
                 if len(n_tail) == 1 and '/m/' in n_tail[0]:
@@ -204,43 +195,17 @@ def relation_text_process(rel_str_list):
                         n_tail_list += ta.clean(n_tail[z])
                 # tail_en = ta.clean(())
                 tail_en = n_tail_list
-
-                w_list += tail_en # 取尾巴实体
-                # print(i)
-                # w_list = ta.clean(re_list)
-
+                w_list += tail_en
                 relation_description_list += w_list
                 relation_description_list.append(".")
-
-
                 neighbours_li.append(w_list)
-
-                # print("w_list",w_list)
 
             else:
 
                 sub_re_list = re_list
-                # print(sub_re_list)
-                # no_neighbour = ta.clean(sub_re_list)
                 relation_description_list += sub_re_list
                 relation_description_list.append(".")
 
-            # re_list = relation_neighbours[i].split(" ") # 分解每个邻居
-            #
-            # sub_re_list = re_list[1:-1]
-            #
-            # w_list = [re_list[0]] # 取头实体
-            #
-            # for j in range(len(sub_re_list)):
-            #     w_list += ta.clean(sub_re_list[j])
-            #
-            # w_list.append(re_list[-1]) # 取尾巴实体
-            #
-            # print(i,w_list)
-            #
-            # relation_description_list += w_list
-            # relation_description_list.append(".")
-        # print('relation_description_list',relation_description_list)
         relation_des_word_list.append(" ".join(relation_description_list))
 
     return relation_des_word_list
@@ -252,9 +217,6 @@ def adv_entity_text_process(ent_str):
     """
 
     str = ent_str.split("$")
-
-    # str = ta.clean(str)
-    # entity_symbol = str[0]
     entity_name = ta.clean(str[0])
     entity_des = ta.clean(str[1])
 
@@ -268,17 +230,15 @@ def adv_entity_text_process(ent_str):
 
     for i in range(len(li)):
 
-        re_list = li[i].split(" ") # 分解每个邻居
+        re_list = li[i].split(" ")
         # print(re_list)
         sub_re_list = re_list[1:-1]
         # print(sub_re_list)
-        w_list = [re_list[0]] # 取头实体
+        w_list = [re_list[0]]
         for j in range(len(sub_re_list)):
             w_list += ta.clean(sub_re_list[j])
 
-        w_list.append(re_list[-1]) # 取尾巴实体
-        # print(i)
-        # print(w_list)
+        w_list.append(re_list[-1])
         entity_description_list += w_list
         neighbours_li.append(w_list)
 
@@ -335,44 +295,27 @@ def entity_text_process(ent_str):
 
     for i in range(len(li)):
 
-        re_list = li[i].split(" ") # 分解每个邻居
+        re_list = li[i].split(" ")
         # print(re_list)
         sub_re_list = re_list[1:-1]
         # print(sub_re_list)
-        w_list = [re_list[0]] # 取头实体
+        w_list = [re_list[0]]
         for j in range(len(sub_re_list)):
             w_list += ta.clean(sub_re_list[j])
 
-        w_list.append(re_list[-1]) # 取尾巴实体
+        w_list.append(re_list[-1])
         w_list.append(".")
         # print(i)
         # print(w_list)
         entity_description_list += w_list
         neighbours_li.append(w_list)
 
-    # print(neighbours_li)
-    # print("neighbours : ", len(neighbours_li))
-
-    # print(entity_description_list)
-    # print(len(entity_description_list))
-
     return entity_description_list
-
-    # print(eval(str[3])[0])
-
-
-    # 做一个词库，包含所有实体和关系
-
 
 def constuct_entity_des(entity_name,entity_mention,current_entity_des_using_name):
     """
     given a entity , which was transformed into a word vector
     """
-
-    # _str = ent_str.split("$")
-
-    # str = ta.clean(str)
-    # entity_symbol = str[0]
 
     _entity_name = []
     if '/m/' in entity_name:
@@ -420,14 +363,13 @@ def constuct_entity_des(entity_name,entity_mention,current_entity_des_using_name
 
                 sub_re_list = re_list[beg: end+1]
                 w_list = []
-                # 加入头实体
+
                 w_list += _entity_name
-                # 处理关系
+
                 for j in range(len(sub_re_list)):
 
                     w_list += ta.clean(sub_re_list[j])
 
-                # 处理尾实体
                 n_tail = re_list[end+1:]
                 n_tail_list = []
                 if len(n_tail) == 1 and '/m/' in n_tail[0]:
@@ -436,7 +378,7 @@ def constuct_entity_des(entity_name,entity_mention,current_entity_des_using_name
                     for z in range(len(n_tail)):
                         n_tail_list += ta.clean(n_tail[z])
                 tail_en = n_tail_list
-                w_list += tail_en # 取尾巴实体
+                w_list += tail_en
 
                 entity_description_list += w_list
             else:
@@ -468,7 +410,7 @@ def word2vector(word_dict, dim):
     """
     print("Word to vector ... \n")
     # word2vector
-    word_to_idx = word_dict  # 数据集中所有的单词
+    word_to_idx = word_dict
     print(len(word_to_idx))
 
     pretrained_embeddings = np.random.uniform(-0.5, 0.5, (len(word_dict), dim))
@@ -477,22 +419,11 @@ def word2vector(word_dict, dim):
     word2vec = load_golve_vec(word_to_idx, dim)
     print(len(word2vec))
     print(word_to_idx['the'])
-    for word, vector in word2vec.items():  # 初始化每个词
+    for word, vector in word2vec.items():
         print(word)
 
         print(word_to_idx[word])
         pretrained_embeddings[word_to_idx[word]] = vector
-
-    # 打印测试
-    # print("NULL -> ",word_to_idx['NULL'],pretrained_embeddings[word_to_idx['NULL']])
-    # print("contemporary -> ",pretrained_embeddings[30080])
-    # print("the - > ",pretrained_embeddings[12104])
-    # print("the - > ",pretrained_embeddings[word_to_idx['the']])
-
-    # singer_index = word_to_idx['singer']
-    # print(singer_index)
-    # print("singer - > ",pretrained_embeddings[singer_index])
-    # print("bryan - > ",pretrained_embeddings[25286])
     #
     import torch
     pretrained_embeddings = torch.as_tensor(pretrained_embeddings)

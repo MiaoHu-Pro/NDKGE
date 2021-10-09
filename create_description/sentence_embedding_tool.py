@@ -25,7 +25,7 @@ def word2vector(word_dict, dim):
     """
     print("Word to vector ... \n")
     # word2vector
-    word_to_idx = word_dict  # 数据集中所有的单词
+    word_to_idx = word_dict
     # print(len(word_to_idx))
 
     pretrained_embeddings = np.random.uniform(-0.5, 0.5, (len(word_dict), dim))
@@ -35,22 +35,11 @@ def word2vector(word_dict, dim):
     # word2vec = load_w2v_vec('./data/GoogleNews-vectors-negative300.bin', word_to_idx)
     word2vec = load_golve_vec(word_to_idx, dim)
     # print(len(word2vec))
-    for word, vector in word2vec.items():  # 初始化每个词
+    for word, vector in word2vec.items():
         # print(word)
         # print(word_to_idx[word])
         pretrained_embeddings[word_to_idx[word]] = vector
 
-    # 打印测试
-    # print("NULL -> ",word_to_idx['NULL'],pretrained_embeddings[word_to_idx['NULL']])
-    # print("contemporary -> ",pretrained_embeddings[30080])
-    # print("the - > ",pretrained_embeddings[12104])
-    # print("the - > ",pretrained_embeddings[word_to_idx['the']])
-
-    # singer_index = word_to_idx['singer']
-    # print(singer_index)
-    # print("singer - > ",pretrained_embeddings[singer_index])
-    # print("bryan - > ",pretrained_embeddings[25286])
-    #
     import torch
     pretrained_embeddings = torch.as_tensor(pretrained_embeddings)
     return pretrained_embeddings

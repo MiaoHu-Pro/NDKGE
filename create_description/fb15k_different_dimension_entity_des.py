@@ -5,7 +5,7 @@ import numpy as np
 import pandas as pd
 from numpy.core._multiarray_umath import ndarray
 
-from utilities import Enti,Rela, write_to_file, relation_text_process
+from utilities import Enti, Rela, write_to_file, relation_text_process
 from text_analytics.text_analytics.text_analytics import text_analytics
 import ast
 from get_word2vector import read_word_bag
@@ -89,7 +89,7 @@ def read_entity_description(entity_description):
     return x_obj
 
 
-def set_relation_description_obj(relation,id_vec_dim):
+def set_relation_description_obj(relation, id_vec_dim):
     print("set_relation_description_obj ... ")
 
     relation_name = relation[:, 0]
@@ -107,6 +107,7 @@ def set_relation_description_obj(relation,id_vec_dim):
         rel_obj_set.append(rel)
 
     return rel_obj_set, relation_description_word_list
+
 
 def entity_text_process(ent_str):
     """
@@ -151,7 +152,7 @@ def entity_text_process(ent_str):
 
     for i in range(len(li)):
 
-        re_list = li[i].split(" ") # 分解每个邻居
+        re_list = li[i].split(" ")  # 分解每个邻居
         # re_list = li[i]
 
         if 'has' in re_list and 'with' in re_list:
@@ -160,31 +161,29 @@ def entity_text_process(ent_str):
             end = re_list.index('with')
 
             # print(beg,end)
-            sub_re_list = re_list[beg:end+1]
+            sub_re_list = re_list[beg:end + 1]
             # print(sub_re_list)
 
             w_list = []
-            # 加入头实体
+            # add head entity
             w_list += entity_name
-            # 处理关系
-            for j in range(len(sub_re_list)):
 
+            for j in range(len(sub_re_list)):
                 w_list += ta.clean(sub_re_list[j])
 
-            # 处理尾实体
-            n_tail = re_list[end+1: ]
+            # tail entity
+            n_tail = re_list[end + 1:]
             n_tail_list = []
             if len(n_tail) == 1 and '/m/' in n_tail[0]:
                 n_tail_list.append(n_tail[0])
             else:
 
                 for z in range(len(n_tail)):
-
                     n_tail_list += ta.clean(n_tail[z])
             # tail_en = ta.clean(())
             tail_en = n_tail_list
 
-            w_list += tail_en # 取尾巴实体
+            w_list += tail_en
             # print(i)
             # w_list = ta.clean(re_list)
 
@@ -195,33 +194,6 @@ def entity_text_process(ent_str):
             # no_neighbour = ta.clean(sub_re_list)
             entity_description_list += sub_re_list
 
-        #
-        # print()
-        # # print(sub_re_list)
-        # # w_list = [re_list[0]] # 取头实体
-        # w_list = []
-        # w_list += entity_name
-        # for j in range(len(sub_re_list)):
-        #
-        #     w_list += ta.clean(sub_re_list[j])
-        #
-        # if "/m" in re_list[-1]:
-        #     tail_en = re_list[-1]
-        #
-        # else:
-        #     tail_en = ta.clean(re_list[-1])
-        #
-        # w_list += tail_en # 取尾巴实体
-        # # print(i)
-        # # w_list = ta.clean(re_list)
-        #
-        # entity_description_list += w_list
-
-        # print(entity_description_list)
-
-    # print(neighbours_li)
-    # print("neighbours : ", len(neighbours_li))
-
     print(entity_description_list)
     # print(len(entity_description_list))
 
@@ -230,8 +202,7 @@ def entity_text_process(ent_str):
     # print(eval(str[3])[0])
 
 
-    # 做一个词库，包含所有实体和关系
-def set_entity_description_obj(entity_des,id_vec_dim):
+def set_entity_description_obj(entity_des, id_vec_dim):
     all_entity_description_word_list = []
     entity_description_list = []
 
@@ -258,7 +229,6 @@ def set_entity_description_obj(entity_des,id_vec_dim):
         en_des = str(name) + '$' + str(mention) + '$' + str(neighbours)
         entity_des_word_list = entity_text_process(en_des)  # get entity des 's word list
 
-
         entity = Enti(_id=entity_id, _symbal=symbol, _label=name, _description=mention, _neighbours=neighbours,
                       _entity2vec=id2vector, _entity_des_word_list=entity_des_word_list)
 
@@ -267,14 +237,13 @@ def set_entity_description_obj(entity_des,id_vec_dim):
 
         entity_description_list.append(entity)
 
-        # 记录词表
         new_word_bag += entity_des_word_list
         new_word_bag = list(set(new_word_bag))
-        print("len(new_word_bag): ",len(new_word_bag))
+        print("len(new_word_bag): ", len(new_word_bag))
 
     print("set_entity_description_obj --> Over ! ")
-    print(new_word_bag,len(new_word_bag))
-    # """word_bag_dic 无法包含所有的word， 有bug"""
+    print(new_word_bag, len(new_word_bag))
+
     word_bag_dic = {}
     for i in range(len(new_word_bag)):
         word_bag_dic[new_word_bag[i]] = i
@@ -282,7 +251,6 @@ def set_entity_description_obj(entity_des,id_vec_dim):
     write_to_file("./FB15K/fb15_word_bag.txt", new_word_bag)
 
     print(word_bag_dic)
-
 
     print(len(all_entity_description_word_list))
 
@@ -293,7 +261,6 @@ def get_word_bag(train2id, relation2id, entity_description_obj):
     print("get_triples_description - begin ... \n")
 
     """
-    重要，不要删除
     train2id : the index of train data
     relation2id: the index of relation
     entity_description_obj : entity object which contains id, symbol, name, description, neighbours.
@@ -370,12 +337,6 @@ def get_word_bag(train2id, relation2id, entity_description_obj):
         word_list += tail_description_word_list
         word_list = list(set(word_list))
 
-        """ next , all words become vector using World2vector 
-            将获取的head_description_word_list，relation_description_word_list，tail_description_word_list
-            通过word词模型，变成向量,然后使用LSTM进行编码
-            from get_word2vector import get_word2vec 
-        """
-
         # print("\n head description pre-vector... \n")
         # print(head_description_word_list)
         # print(np.array(pre_word_embedding[[word_bag[x] for x in head_description_word_list]]))
@@ -439,23 +400,13 @@ def word2vector(word_dict, dim):
     word2vec = load_golve_vec(word_to_idx, dim)
     print(len(word2vec))
     print(word_to_idx['the'])
-    for word, vector in word2vec.items():  # 初始化每个词
+    for word, vector in word2vec.items():
         print(word)
 
         print(word_to_idx[word])
         pretrained_embeddings[word_to_idx[word]] = vector
 
-    # 打印测试
-    # print("NULL -> ",word_to_idx['NULL'],pretrained_embeddings[word_to_idx['NULL']])
-    # print("contemporary -> ",pretrained_embeddings[30080])
-    # print("the - > ",pretrained_embeddings[12104])
-    # print("the - > ",pretrained_embeddings[word_to_idx['the']])
 
-    # singer_index = word_to_idx['singer']
-    # print(singer_index)
-    # print("singer - > ",pretrained_embeddings[singer_index])
-    # print("bryan - > ",pretrained_embeddings[25286])
-    #
     pretrained_embeddings = torch.as_tensor(pretrained_embeddings)
     return pretrained_embeddings
 
@@ -477,7 +428,6 @@ def get_des_embedding(pre_embeddings, word_bag, sentence_set):
     return init_embedding
 
 
-
 def obtain_dif_dim_vector(entity_description_obj, all_entity_description_list, relation_description_obj,
                           all_relation_description_list):
     """
@@ -497,13 +447,10 @@ def obtain_dif_dim_vector(entity_description_obj, all_entity_description_list, r
 
     word_bag, all_word_dic = read_word_bag(word_bag_path)  # obtain word bag
 
-
     dim_l = [0, 50, 100, 200, 300]
-
 
     print(all_entity_description_list)
     print(type(all_entity_description_list))
-
 
     for d in dim_l:
         if d == 0:
@@ -517,7 +464,6 @@ def obtain_dif_dim_vector(entity_description_obj, all_entity_description_list, r
 
             entity_des_embedding = np.array(entity_description_embedding)
             # relation
-            # 随机生成50向量
             relation_description_embedding = []
             for j in range(len(relation_description_obj)):
                 vec = relation_description_obj[j].rel2vec
@@ -525,8 +471,10 @@ def obtain_dif_dim_vector(entity_description_obj, all_entity_description_list, r
             #
             relation_des_embedding = np.array(relation_description_embedding)
 
-            np.savetxt('./FB15K/new_init_entity_embedding_no_symbol_id50_des0.txt', entity_des_embedding, fmt='%.5f', delimiter=',')
-            np.savetxt('./FB15K/new_init_relation_embedding_no_symbol_id50_des0.txt', relation_des_embedding, fmt='%.5f',
+            np.savetxt('./FB15K/new_init_entity_embedding_no_symbol_id50_des0.txt', entity_des_embedding, fmt='%.5f',
+                       delimiter=',')
+            np.savetxt('./FB15K/new_init_relation_embedding_no_symbol_id50_des0.txt', relation_des_embedding,
+                       fmt='%.5f',
                        delimiter=',')
 
         else:
@@ -561,40 +509,38 @@ def obtain_dif_dim_vector(entity_description_obj, all_entity_description_list, r
             print(x_en_id_des_em.shape)
             print(x_rel_id_des_em.shape)
 
-            np.savetxt('./FB15K/new_init_entity_embedding_no_symbol_id50_des' + str(d) + '.txt', x_en_id_des_em, fmt='%.5f',
+            np.savetxt('./FB15K/new_init_entity_embedding_no_symbol_id50_des' + str(d) + '.txt', x_en_id_des_em,
+                       fmt='%.5f',
                        delimiter=',')
-            np.savetxt('./FB15K/new_init_relation_embedding_no_symbol_id50_des' + str(d) + '.txt', x_rel_id_des_em, fmt='%.5f',
+            np.savetxt('./FB15K/new_init_relation_embedding_no_symbol_id50_des' + str(d) + '.txt', x_rel_id_des_em,
+                       fmt='%.5f',
                        delimiter=',')
             print("d: %d over" % d)
 
     print("obtain_dif_dim_vector... over ...")
 
 
-
 def read_new_init_embs(in_enti_path, in_rel_path):
-
     print("read my word embedding input...")
 
-    init_entity_arr = pd.read_csv(in_enti_path,header=None)
-    init_rel_arr = pd.read_csv(in_rel_path,header=None)
+    init_entity_arr = pd.read_csv(in_enti_path, header=None)
+    init_rel_arr = pd.read_csv(in_rel_path, header=None)
 
     init_entity_arr = np.array(init_entity_arr, dtype=np.float32)
     init_rel_arr = np.array(init_rel_arr, dtype=np.float32)
 
-    return init_entity_arr,init_rel_arr
+    return init_entity_arr, init_rel_arr
 
 
 def generate_id0_des():
-
-
-    dim = [50,100,200,300]
+    dim = [50, 100, 200, 300]
 
     for d in dim:
         print(d)
         r_entity_embs_path = './FB15K/new_init_entity_embedding_no_symbol_id50_des' + str(d) + '.txt'
         r_rel_embs_path = './FB15K/new_init_relation_embedding_no_symbol_id50_des' + str(d) + '.txt'
 
-        entity_ini_embedding, rel_ini_embedding = read_new_init_embs(r_entity_embs_path,r_rel_embs_path)
+        entity_ini_embedding, rel_ini_embedding = read_new_init_embs(r_entity_embs_path, r_rel_embs_path)
 
         tmp_entity_ini_embedding = entity_ini_embedding[:, 50:]
         print(tmp_entity_ini_embedding.shape)
@@ -606,21 +552,16 @@ def generate_id0_des():
 
         np.savetxt(w_entity_embs_path, tmp_entity_ini_embedding, fmt='%.5f', delimiter=',')
         np.savetxt(w_rel_embs_path, tmp_rel_ini_embedding, fmt='%.5f',
-                           delimiter=',')
+                   delimiter=',')
 
     print("generate_id0_des Over ...")
 
 
-
 def obtain_id50d():
-
     path = 'new_init_entity_embedding_no_symbol_id0_des50'
 
 
 if __name__ == "__main__":
-
-
-
     # generate_id0_des()
     #
 
@@ -638,9 +579,10 @@ if __name__ == "__main__":
     entity_description = "./FB15K/all_entity_description_no_symbol_n20s_1.txt"
     entity_description = read_entity_description(entity_description)  # read original entity description
     entity_description_obj, all_entity_description_list = set_entity_description_obj(
-        entity_description,id_vec_dim)  # set entity object
+        entity_description, id_vec_dim)  # set entity object
 
     """obtain relation description"""
-    relation_description_obj, all_relation_description_list = set_relation_description_obj(relation2id,id_vec_dim)
+    relation_description_obj, all_relation_description_list = set_relation_description_obj(relation2id, id_vec_dim)
 
-    obtain_dif_dim_vector(entity_description_obj, all_entity_description_list, relation_description_obj, all_relation_description_list)
+    obtain_dif_dim_vector(entity_description_obj, all_entity_description_list, relation_description_obj,
+                          all_relation_description_list)
