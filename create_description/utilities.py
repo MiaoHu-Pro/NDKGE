@@ -1,15 +1,48 @@
 
-import os
 import numpy as np
 import pandas as pd
 import ast
 import sys
+import os
+import re
+import pickle
+import cytoolz as ct
+from gensim.parsing import preprocessing
+
 sys.path.append("../")
 from text_analytics.text_analytics.text_analytics import text_analytics
 
 ta = text_analytics()
 class Rela(object):
     pass
+
+def clean(line):
+
+    # function_words_single = ["the", "of", "and", "to", "a", "in", "i", "he", "that", "was", "it", "his", "you", "with", "as", "for", "had", "is", "her", "not", "but", "at", "on", "she", "be", "have", "by", "which", "him", "they", "this", "from", "all", "were", "my", "we", "one", "so", "said", "me", "there", "or", "an", "are", "no", "would", "their", "if", "been", "when", "do", "who", "what", "them", "will", "out", "up", "then", "more", "could", "into", "man", "now", "some", "your", "very", "did", "has", "about", "time", "can", "little", "than", "only", "upon", "its", "any", "other", "see", "our", "before", "two", "know", "over", "after", "down", "made", "should", "these", "must", "such", "much", "us", "old", "how", "come", "here", "never", "may", "first", "where", "go", "s", "came", "men", "way", "back", "himself", "own", "again", "say", "day", "long", "even", "too", "think", "might", "most", "through", "those", "am", "just", "make", "while", "went", "away", "still", "every", "without", "many", "being", "take", "last", "shall", "yet", "though", "nothing", "get", "once", "under", "same", "off", "another", "let", "tell", "why", "left", "ever", "saw", "look", "seemed", "against", "always", "going", "few", "got", "something", "between", "sir", "thing", "also", "because", "yes", "each", "oh", "quite", "both", "almost", "soon", "however", "having", "t", "whom", "does", "among", "perhaps", "until", "began", "rather", "herself", "next", "since", "anything", "myself", "nor", "indeed", "whose", "thus", "along", "others", "till", "near", "certain", "behind", "during", "alone", "already", "above", "often", "really", "within", "used", "use", "itself", "whether", "around", "second", "across", "either", "towards", "became", "therefore", "able", "sometimes", "later", "else", "seems", "ten", "thousand", "don", "certainly", "ought", "beyond", "toward", "nearly", "although", "past", "seem", "mr", "mrs", "dr", "thou", "except", "none", "probably", "neither", "saying", "ago", "ye", "yourself", "getting", "below", "quickly", "beside", "besides", "especially", "thy", "thee", "d", "unless", "three", "four", "five", "six", "seven", "eight", "nine", "hundred", "million", "billion", "third", "fourth", "fifth", "sixth", "seventh", "eighth", "ninth", "tenth", "amp", "m", "re", "u", "via", "ve", "ll", "th", "lol", "pm", "things", "w", "didn", "doing", "doesn", "r", "gt", "n", "st", "lot", "y", "im", "k", "isn", "ur", "hey", "yeah", "using", "vs", "dont", "ok", "v", "goes", "gone", "lmao", "happen", "wasn", "gotta", "nd", "okay", "aren", "wouldn", "couldn", "cannot", "omg", "non", "inside", "iv", "de", "anymore", "happening", "including", "shouldn", "yours",]
+    # function_words_single =  ['i', 'me', 'my', 'myself', 'we', 'our', 'ours', 'ourselves', 'you', 'your', 'yours', 'yourself', 'yourselves', 'he', 'him', 'his', 'himself', 'she', 'her', 'hers', 'herself', 'it', 'its', 'itself', 'they', 'them', 'their', 'theirs', 'themselves', 'what', 'which', 'who', 'whom', 'this', 'that', 'these', 'those', 'am', 'is', 'are', 'was', 'were', 'be', 'been', 'being', 'have', 'has', 'had', 'having', 'do', 'does', 'did', 'doing', 'a', 'an', 'the', 'and', 'but', 'if', 'or', 'because', 'as', 'until', 'while', 'of', 'at', 'by', 'for', 'with', 'about', 'against', 'between', 'into', 'through', 'during', 'before', 'after', 'above', 'below', 'to', 'from', 'up', 'down', 'in', 'out', 'on', 'off', 'over', 'under', 'again', 'further', 'then', 'once', 'here', 'there', 'when', 'where', 'why', 'how', 'all', 'any', 'both', 'each', 'few', 'more', 'most', 'other', 'some', 'such', 'no', 'nor', 'not', 'only', 'own', 'same', 'so', 'than', 'too', 'very', 's', 't', 'can', 'will', 'just', 'don', 'should', 'now', 'd', 'll', 'm', 'o', 're', 've', 'y', 'ain', 'aren', 'couldn', 'didn', 'doesn', 'hadn', 'hasn', 'haven', 'isn', 'ma', 'mightn', 'mustn', 'needn', 'shan', 'shouldn', 'wasn', 'weren', 'won', 'wouldn']
+
+    # Remove links, hashtags, at-mentions, mark-up, and "RT"
+    line = re.sub(r"http\S+", "", line)
+    line = re.sub(r"@\S+", "", line)
+    line = re.sub(r"#\S+", "", line)
+    line = re.sub("<[^>]*>", "", line)
+    # line = line.replace(" RT", "").replace("RT ", "")
+
+    # Remove punctuation and extra spaces
+    line = ct.pipe(line,
+                   preprocessing.strip_tags,
+                   preprocessing.strip_punctuation,
+                   preprocessing.strip_numeric,
+                   preprocessing.strip_non_alphanum,
+                   preprocessing.strip_multiple_whitespaces
+                   )
+
+    # Strip and lowercase
+    line = line.lower().strip().lstrip().split()
+
+    # line = [x for x in line if x not in function_words_single]
+
+    return line
 
 class Enti(object):
     def __init__(self, _id, _symbol, _label, _mention, _neighbours, _entity2vec,_entity_mention_des_word_list,_entity_description_des_word_list = None):
@@ -106,7 +139,7 @@ def relation_text_process(rel_str_list):
         relation_mention_list = relation_mention.split(" ")
 
         # print("relation_mention_list",relation_mention_list)
-        relation_mention = ta.clean(relation_mention_list[0])
+        relation_mention = clean(relation_mention_list[0])
         # print("relation_mention",relation_mention)
 
         two_entity = relation_mention_list[1:]
@@ -127,8 +160,8 @@ def relation_text_process(rel_str_list):
 
             for z in range(len(head_enti)):
 
-                head_enti_list += ta.clean(head_enti[z])
-        # tail_en = ta.clean(())
+                head_enti_list += clean(head_enti[z])
+        # tail_en = clean(())
         relation_mention += head_enti_list
 
         relation_mention += ['and']
@@ -142,8 +175,8 @@ def relation_text_process(rel_str_list):
 
             for z in range(len(tail_enti)):
 
-                tail_enti_list += ta.clean(tail_enti[z])
-        # tail_en = ta.clean(())
+                tail_enti_list += clean(tail_enti[z])
+        # tail_en = clean(())
         relation_mention += tail_enti_list
 
         # print("relation_mention",relation_mention)
@@ -175,14 +208,14 @@ def relation_text_process(rel_str_list):
 
                     for z in range(len(n_head)):
 
-                        n_head_list += ta.clean(n_head[z])
-                # tail_en = ta.clean(())
+                        n_head_list += clean(n_head[z])
+                # tail_en = clean(())
                 head_en = n_head_list
                 w_list += head_en #
 
                 for j in range(len(sub_re_list)):
 
-                    w_list += ta.clean(sub_re_list[j])
+                    w_list += clean(sub_re_list[j])
 
                 n_tail = re_list[end+1: ]
                 n_tail_list = []
@@ -192,8 +225,8 @@ def relation_text_process(rel_str_list):
 
                     for z in range(len(n_tail)):
 
-                        n_tail_list += ta.clean(n_tail[z])
-                # tail_en = ta.clean(())
+                        n_tail_list += clean(n_tail[z])
+                # tail_en = clean(())
                 tail_en = n_tail_list
                 w_list += tail_en
                 relation_description_list += w_list
@@ -217,8 +250,8 @@ def adv_entity_text_process(ent_str):
     """
 
     str = ent_str.split("$")
-    entity_name = ta.clean(str[0])
-    entity_des = ta.clean(str[1])
+    entity_name = clean(str[0])
+    entity_des = clean(str[1])
 
     li = ast.literal_eval(str[2])
 
@@ -236,7 +269,7 @@ def adv_entity_text_process(ent_str):
         # print(sub_re_list)
         w_list = [re_list[0]]
         for j in range(len(sub_re_list)):
-            w_list += ta.clean(sub_re_list[j])
+            w_list += clean(sub_re_list[j])
 
         w_list.append(re_list[-1])
         entity_description_list += w_list
@@ -266,13 +299,13 @@ def entity_text_process(ent_str):
 
     str = ent_str.split("$")
 
-    # str = ta.clean(str)
+    # str = clean(str)
     entity_symbol = str[0]
-    # entity_name = ta.clean(str[1])
-    entity_des = ta.clean(str[1])
+    # entity_name = clean(str[1])
+    entity_des = clean(str[1])
     # print(str[2])
 
-    # print(ta.clean(ast.literal_eval(str[3])[0]))
+    # print(clean(ast.literal_eval(str[3])[0]))
     # print("=====errs=====")
     # print(str)
 
@@ -301,7 +334,7 @@ def entity_text_process(ent_str):
         # print(sub_re_list)
         w_list = [re_list[0]]
         for j in range(len(sub_re_list)):
-            w_list += ta.clean(sub_re_list[j])
+            w_list += clean(sub_re_list[j])
 
         w_list.append(re_list[-1])
         w_list.append(".")
@@ -322,7 +355,7 @@ def constuct_entity_des(entity_name,entity_mention,current_entity_des_using_name
         _entity_name.append(entity_name)
 
     else:
-        _entity_name = ta.clean(entity_name)
+        _entity_name = clean(entity_name)
 
     _entity_mention = []
     if '/m/' in entity_mention:
@@ -331,7 +364,7 @@ def constuct_entity_des(entity_name,entity_mention,current_entity_des_using_name
         _entity_mention = _entity_name
 
     else:
-        _entity_mention = ta.clean(entity_mention)
+        _entity_mention = clean(entity_mention)
 
     # li = ast.literal_eval(_str[2])
 
@@ -368,7 +401,7 @@ def constuct_entity_des(entity_name,entity_mention,current_entity_des_using_name
 
                 for j in range(len(sub_re_list)):
 
-                    w_list += ta.clean(sub_re_list[j])
+                    w_list += clean(sub_re_list[j])
 
                 n_tail = re_list[end+1:]
                 n_tail_list = []
@@ -376,13 +409,13 @@ def constuct_entity_des(entity_name,entity_mention,current_entity_des_using_name
                     n_tail_list.append(n_tail[0])
                 else:
                     for z in range(len(n_tail)):
-                        n_tail_list += ta.clean(n_tail[z])
+                        n_tail_list += clean(n_tail[z])
                 tail_en = n_tail_list
                 w_list += tail_en
 
                 entity_description_list += w_list
             else:
-                # no_neighbour = ta.clean(str())
+                # no_neighbour = clean(str())
                 sub_re_list = re_list
 
                 entity_description_list += sub_re_list

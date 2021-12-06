@@ -122,7 +122,7 @@ def set_entity_description_obj(entity_des):
         entity_des_word_list = entity_text_process(en_des)  # get entity des 's word list
 
         entity = Enti(_id=entity_id, _symbol=symbol, _label=name, _mention=mention, _neighbours=neighbours,
-                      _entity2vec=id2vector, _entity_des_word_list=entity_des_word_list)
+                      _entity2vec=id2vector, _entity_des_word_list= entity_des_word_list)
 
         en_des_word_list = entity.get_entity_description()
         all_entity_description_list.append(en_des_word_list)

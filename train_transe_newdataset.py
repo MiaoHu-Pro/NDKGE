@@ -8,12 +8,12 @@ from openke.data import TrainDataLoader, TestDataLoader
 from utilities import read_new_init_embs ,read_transe_out_embs
 from create_description.ERDse import ERDes
 
-out_transE_entity_emb = './benchmarks/FB15K237/out_transE_entity_embedding50.txt'
-out_transE_relation_emb = './benchmarks/FB15K237/out_transE_relation_embedding50.txt'
+out_transE_entity_emb = './benchmarks/new_dataset/out_transE_entity_embedding_dim100.txt'
+out_transE_relation_emb = './benchmarks/new_dataset/out_transE_relation_embedding_dim100.txt'
 
-pre_train_entity_id, pre_train_rel_id = read_transe_out_embs(out_transE_entity_emb ,out_transE_relation_emb)
-print("out_transE_entity_emb " ,pre_train_entity_id)
-print("out_transE_relation_emb " ,pre_train_rel_id)
+pre_train_entity_id, pre_train_rel_id = read_transe_out_embs(out_transE_entity_emb, out_transE_relation_emb)
+print("out_transE_entity_emb ", pre_train_entity_id)
+print("out_transE_relation_emb ", pre_train_rel_id)
 
 
 # entity_id = './benchmarks/FB15K/randomly_entity_id50.txt'
@@ -30,7 +30,7 @@ print("out_transE_relation_emb " ,pre_train_rel_id)
 
 # entity_embs, rel_embs = read_new_init_embs(new_entity_embs_path ,new_rel_embs_path)
 
-file_path = './benchmarks/FB15K237/'
+file_path = './benchmarks/new_dataset/'
 Paras = {
 	'num_neighbours': 'all',
 	'num_step': 1,
@@ -52,8 +52,6 @@ ent_init_embedding, rel_init_embedding = en_rel_des.get_mention_embeddings()
 print("ent_mention_init_embedding.shape ", ent_init_embedding.shape)
 print("rel_mention_init_embedding.shape " ,rel_init_embedding.shape)
 
-#
-#
 # ent_init_embedding, rel_init_embedding = en_rel_des.get_description_embeddings()
 # print("ent_mention_init_embedding.shape ", ent_init_embedding.shape)
 # print("rel_mention_init_embedding.shape " ,rel_init_embedding.shape)
@@ -64,7 +62,7 @@ time.sleep(1)
 
 # dataloader for training
 train_dataloader = TrainDataLoader(
-	in_path = "./benchmarks/FB15K237/",
+	in_path = "./benchmarks/new_dataset/",
 	nbatches = 100,
 	threads = 8, 
 	sampling_mode = "normal", 
@@ -80,7 +78,7 @@ train_dataloader.set_init_embeddings(ent_init_embedding, rel_init_embedding)
 train_dataloader.set_trains_out_embeddings(pre_train_entity_id, pre_train_rel_id)
 
 # dataloader for test
-test_dataloader = TestDataLoader("./benchmarks/FB15K237/", "link")
+test_dataloader = TestDataLoader("./benchmarks/new_dataset/", "link")
 
 # define the model
 transe = TransE(
@@ -90,8 +88,8 @@ transe = TransE(
 	init_rel_embed = train_dataloader.get_rel_embedding(),
 	per_out_ent_embed= train_dataloader.get_transe_out_entity_embedding(),
 	per_out_rel_embed = train_dataloader.get_transe_out_rel_embedding(),
-	id_dim= 50,
-	dim =50,
+	id_dim= 100,
+	dim =300,
 	p_norm = 1, 
 	norm_flag = True)
 
@@ -99,7 +97,7 @@ transe = TransE(
 # define the loss function
 model = NegativeSampling(
 	model = transe, 
-	loss = MarginLoss(margin = 5.0),
+	loss = MarginLoss(margin = 1.0),
 	batch_size = train_dataloader.get_batch_size()
 )
 
@@ -108,16 +106,14 @@ trainer = Trainer(model = model, data_loader = train_dataloader, train_times = 2
 
 time.sleep(1)
 
-
 print("trainer_run .... " + '\n')
-
 trainer.run()
-transe.save_checkpoint('./checkpoint/transe_mention_id50_des50_e20000.ckpt')
+transe.save_checkpoint('./checkpoint/transe_mention_id100_des300_e20000.ckpt')
 
 # test the model
 print("tester_run .... " + '\n')
 # print("test 1-1: \n")
-transe.load_checkpoint('./checkpoint/transe_mention_id50_des50_e20000.ckpt')
+transe.load_checkpoint('./checkpoint/transe_mention_id100_des300_e20000.ckpt')
 tester = Tester(model = transe, data_loader = test_dataloader, use_gpu = True)
 tester.run_link_prediction(type_constrain = False) 
 

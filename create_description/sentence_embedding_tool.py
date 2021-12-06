@@ -48,10 +48,18 @@ def get_des_embedding(pre_embeddings, word_bag, sentence_set):
     print("Begin get_des_embedding ... ")
 
     init_embedding = []
+    sentence_word_index_set = []
+    other_words = []
     for i in range(len(sentence_set)):
-        word_index = [word_bag[x] for x in sentence_set[i]]
+        # word_index = [word_bag[x] for x in sentence_set[i]]
+        for x in sentence_set[i]:
+            if word_bag.get(x):
+                sentence_word_index_set.append(word_bag[x])
+            else:
+                other_words.append(x)
+                sentence_word_index_set.append(word_bag["NULL"])
 
-        tmp_embedding = pre_embeddings[word_index]
+        tmp_embedding = pre_embeddings[sentence_word_index_set]
         # print(tmp_embedding)
         init_mean_embedding = np.mean(np.array(tmp_embedding), axis=0).tolist()
         # print("init_embedding mean :",init_mean_embedding)

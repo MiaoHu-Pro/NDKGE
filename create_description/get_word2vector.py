@@ -7,7 +7,7 @@ from text_analytics.text_analytics.text_analytics import text_analytics
 import ast
 import torch.nn as nn
 import torch
-ta = text_analytics()
+
 import torchtext
 
 EMBEDDING_DIM = 300
@@ -136,13 +136,22 @@ def get_sentence_init_embedding(pre_embeddings,word_bag,sentence_set):
     # time.sleep(3)
 
     sentence_word_index_set = []
+    other_words = []
     for i in range(len(sentence_set)):
 
-        sentence_set[i] = sentence_set[i] + ["NULL"] * (max_num_words - len(sentence_set[i]))
-        # sentence_word_index_set.append(pre_word2vec[[word_bag[x] for x in sentcence_set[i]]])
-        # print(sentence_set[i])
-        # time.sleep(5)
-        sentence_word_index_set.append([word_bag[x] for x in sentence_set[i]])
+        if len(sentence_set[i]) <= max_num_words:
+            sentence_set[i] = sentence_set[i] + ["NULL"] * (max_num_words - len(sentence_set[i]))
+        else:
+            sentence_set[i] = sentence_set[i][:max_num_words]
+
+        # print("sentence_set[i]",sentence_set[i])
+
+        for x in sentence_set[i]:
+            if word_bag.get(x):
+                sentence_word_index_set.append(word_bag[x])
+            else:
+                other_words.append(x)
+                sentence_word_index_set.append(word_bag["NULL"])
 
     sentence_word_index_set = np.array(sentence_word_index_set).T
 
