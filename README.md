@@ -25,21 +25,21 @@ pip install openke
 python3 train_transe_ndkge.py --dataset_path ./benchmarks/WN18RR/  --dataset WN18RR --setting name --id_dim 20 --word_dim 50  --nbatches 100  --margin 2 --num_epochs 20000 --learning_rate 0.5 --model_name wn18rr_name_epochs-20000_margin-2_lr-1_id_dim-20_word_dim-50
 ```
 
-`--dataset_path`: the path of dataset.
+`--dataset_path`: the path of the dataset.
  
  `--dataset`: dataset name.
  
- `--setting`: using different setting, such as 'name','mention',and 'description'
+ `--setting`: using different settings, such as 'name','mention',and 'description'
 
-  `--id_dim`: the dimention of id.
+  `--id_dim`: the dimension of id.
   
-  `--word_dim`: the dimention of token.
+  `--word_dim`: the dimension of the token.
   
   `--nbatches`: batch size for training.
   
   `--learning_rate`: learning rate for training.
   
-  `--num_epochs`: number of epoches for training.
+  `--num_epochs`: number of epochs for training.
   
   `--model_name`: model name for output.
   
