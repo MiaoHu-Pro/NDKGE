@@ -51,7 +51,7 @@ Download data from [here](https://qubstudentcloud-my.sharepoint.com/:f:/g/person
 ### Contact:
 This paper has been accepted by the 28th International Conference on Natural Language & Information Systems (NLDB 2023). The published version can be viewed by this [link](https://pure.qub.ac.uk/en/publications/knowledge-graph-representation-learning-via-generated-description). If you use any code from our repo in your paper, pls cite:
 ```buildoutcfg
-@InProceedings{10.1007/978-3-031-35320-8_26,
+@InProceedings{mhu23_ndkge,
 author="Hu, Miao
 and Lin, Zhiwei
 and Marshall, Adele",
